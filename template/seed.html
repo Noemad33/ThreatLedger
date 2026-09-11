@@ -1,0 +1,166 @@
+<title>Morning Threat Ledger</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root { --bg: #eef1ec; --surface: #ffffff; --surface-2: #e4e8df; --line: #d2d7c9; --ink: #1b231f; --ink-soft: #52605a; --ink-faint: #7c887f; --accent: #9c5a22; --accent-soft: #c98a4b; --sev-critical: #a6362b; --sev-critical-bg: #f6e4e0; --sev-high: #a06018; --sev-high-bg: #f6ead6; --sev-watch: #3e6b63; --sev-watch-bg: #dfebe8; --shadow: 0 1px 0 rgba(27,35,31,0.06); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #12160f; --surface: #191f19; --surface-2: #212820; --line: #333c31; --ink: #e9ece2; --ink-soft: #a4ae9d; --ink-faint: #79836f; --accent: #d99b58; --accent-soft: #b87c3c; --sev-critical: #e2685a; --sev-critical-bg: #3a211d; --sev-high: #e0a25c; --sev-high-bg: #3a2f18; --sev-watch: #7fb1a6; --sev-watch-bg: #1c2d29; --shadow: 0 1px 0 rgba(0,0,0,0.3); } }
+  :root[data-theme="dark"] { --bg: #12160f; --surface: #191f19; --surface-2: #212820; --line: #333c31; --ink: #e9ece2; --ink-soft: #a4ae9d; --ink-faint: #79836f; --accent: #d99b58; --accent-soft: #b87c3c; --sev-critical: #e2685a; --sev-critical-bg: #3a211d; --sev-high: #e0a25c; --sev-high-bg: #3a2f18; --sev-watch: #7fb1a6; --sev-watch-bg: #1c2d29; --shadow: 0 1px 0 rgba(0,0,0,0.3); }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.5; }
+  .page { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  @media (max-width: 600px) { .page { padding: 2rem 1.1rem 3.5rem; } }
+  .masthead { border-bottom: 2px solid var(--ink); padding-bottom: 1.1rem; margin-bottom: 1.4rem; }
+  .masthead-row { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+  .eyebrow { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+  .wordmark { font-family: "Newsreader", Georgia, serif; font-size: clamp(2.1rem, 6vw, 2.75rem); font-weight: 600; letter-spacing: -0.01em; margin: 0.2rem 0 0.35rem; text-wrap: balance; }
+  .masthead-meta { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.8rem; color: var(--ink-soft); display: flex; gap: 1.25rem; flex-wrap: wrap; }
+  .masthead-meta b { color: var(--ink); font-weight: 500; }
+  .tab-nav { display: flex; gap: 1.85rem; border-bottom: 1px solid var(--line); margin-bottom: 2.2rem; }
+  .tab-btn { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500; color: var(--ink-faint); background: none; border: none; cursor: pointer; padding: 0.75rem 0.05rem 0.65rem; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab-btn:hover { color: var(--ink-soft); }
+  .tab-btn[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+  .tab-panel[hidden] { display: none; }
+  .ioc-block { margin-bottom: 2.8rem; }
+  .ioc-block-head { display: flex; align-items: baseline; gap: 0.65rem; margin-bottom: 0.3rem; }
+  .ioc-block-head h2 { font-family: "Newsreader", Georgia, serif; font-weight: 600; font-size: 1.35rem; margin: 0; text-wrap: balance; }
+  .ioc-block-sub { font-size: 0.85rem; color: var(--ink-faint); margin: 0 0 1.1rem; }
+  .ioc-report, .query-panel { background: var(--ink); color: var(--bg); border-radius: 4px; padding: 1.15rem 1.3rem; margin-bottom: 0.9rem; }
+  .ioc-report:last-child, .query-panel:last-child { margin-bottom: 0; }
+  .ioc-report-head, .query-panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.55rem; }
+  .ioc-report-title { font-weight: 600; font-size: 0.98rem; }
+  .ioc-report-title a { color: var(--bg); text-decoration: underline; text-underline-offset: 2px; }
+  .ioc-report-title a:hover { opacity: 0.75; }
+  .ioc-tag, .query-label { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; opacity: 0.7; white-space: nowrap; }
+  .ioc-report-context { font-size: 0.86rem; opacity: 0.85; margin: 0 0 0.85rem; max-width: 60ch; }
+  .ioc-list, .query-meta { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.84rem; display: flex; flex-wrap: wrap; gap: 0.45rem 0.6rem; }
+  .ioc-item, .query-chip { padding: 0.18rem 0.55rem; border: 1px solid currentColor; border-radius: 3px; opacity: 0.95; }
+  .ioc-block-footnote { font-size: 0.78rem; color: var(--ink-faint); font-family: "IBM Plex Mono", ui-monospace, monospace; margin-top: 0.9rem; }
+  .query-pre { background: color-mix(in srgb, currentColor 10%, transparent); border-radius: 3px; padding: 0.75rem 0.9rem; margin: 0.7rem 0 0.85rem; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.8rem; line-height: 1.55; white-space: pre; overflow-x: auto; }
+  .hunt-card { background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: 1.3rem 1.4rem; margin-bottom: 1.6rem; box-shadow: var(--shadow); }
+  .hunt-card:last-child { margin-bottom: 0; }
+  .hunt-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.3rem; }
+  .hunt-card-head h3 { font-family: "Newsreader", Georgia, serif; font-weight: 600; font-size: 1.15rem; margin: 0; text-wrap: balance; }
+  .hunt-card-context { font-size: 0.88rem; color: var(--ink-soft); margin: 0 0 1rem; max-width: 66ch; }
+  .no-query-note { font-size: 0.85rem; }
+  .exec { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 3px; padding: 1.3rem 1.4rem; margin-bottom: 2.6rem; box-shadow: var(--shadow); }
+  .exec h2 { margin: 0 0 0.8rem; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; }
+  .exec ul { margin: 0; padding-left: 1.15rem; } .exec li { margin-bottom: 0.55rem; } .exec li:last-child { margin-bottom: 0; } .exec strong { color: var(--ink); }
+  section.brief-section { margin-bottom: 2.6rem; }
+  .section-head { display: flex; align-items: baseline; gap: 0.65rem; margin-bottom: 1rem; border-bottom: 1px solid var(--line); padding-bottom: 0.5rem; }
+  .section-head h2 { font-family: "Newsreader", Georgia, serif; font-weight: 600; font-size: 1.35rem; margin: 0; text-wrap: balance; }
+  .section-sub { font-size: 0.85rem; color: var(--ink-faint); margin: -0.4rem 0 1.3rem; max-width: 64ch; }
+  .section-count { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.75rem; color: var(--ink-faint); }
+  .item { display: grid; grid-template-columns: auto 1fr; gap: 0.9rem; padding: 0.85rem 0; border-bottom: 1px solid var(--line); } .item:last-child { border-bottom: none; }
+  .sev-chip { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.68rem; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; padding: 0.22rem 0.5rem; border-radius: 3px; white-space: nowrap; height: fit-content; margin-top: 0.15rem; }
+  .sev-critical { color: var(--sev-critical); background: var(--sev-critical-bg); }
+  .sev-high { color: var(--sev-high); background: var(--sev-high-bg); }
+  .sev-watch { color: var(--sev-watch); background: var(--sev-watch-bg); }
+  .item h3 { margin: 0 0 0.3rem; font-size: 1.02rem; font-weight: 600; line-height: 1.35; }
+  .item h3 a { color: var(--ink); text-decoration: none; background-image: linear-gradient(var(--accent-soft), var(--accent-soft)); background-size: 100% 1px; background-repeat: no-repeat; background-position: 0 100%; } .item h3 a:hover { color: var(--accent); }
+  .item p { margin: 0; color: var(--ink-soft); font-size: 0.94rem; }
+  .meta-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.45rem; }
+  .meta-tag { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink-faint); background: var(--surface-2); border: 1px solid var(--line); border-radius: 3px; padding: 0.08rem 0.4rem; }
+  .pulse-note { background: var(--surface-2); border: 1px dashed var(--line); border-radius: 3px; padding: 1rem 1.15rem; font-size: 0.92rem; color: var(--ink-soft); } .pulse-note b { color: var(--ink); }
+  .radar-list { margin: 0; padding-left: 1.2rem; font-size: 0.94rem; color: var(--ink-soft); } .radar-list li { margin-bottom: 0.4rem; } .radar-list a { color: var(--ink); } .radar-list a:hover { color: var(--accent); }
+  .sources { margin-top: 3rem; padding-top: 1.4rem; border-top: 2px solid var(--ink); }
+  .sources h2 { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; margin: 0 0 0.9rem; }
+  .sources ol { margin: 0; padding-left: 1.3rem; columns: 2; column-gap: 2rem; font-size: 0.82rem; } @media (max-width: 560px) { .sources ol { columns: 1; } }
+  .sources li { margin-bottom: 0.55rem; break-inside: avoid; } .sources a { color: var(--ink-soft); text-decoration: none; } .sources a:hover { color: var(--accent); }
+  .colophon { margin-top: 2.4rem; font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; color: var(--ink-faint); line-height: 1.7; }
+  .watchlist { margin-top: 3rem; padding-top: 1.4rem; border-top: 1px solid var(--line); }
+  .watchlist h2 { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 500; margin: 0 0 0.2rem; }
+  .watchlist-sub { font-size: 0.82rem; color: var(--ink-faint); margin: 0 0 1rem; }
+  .watchlist-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+  .watchlist-row { display: flex; flex-wrap: wrap; gap: 0.3rem 0.5rem; align-items: baseline; font-size: 0.85rem; }
+  .wl-cat { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.66rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-faint); flex: 0 0 100%; margin-bottom: 0.05rem; }
+  .watchlist-row a { color: var(--ink-soft); text-decoration: none; border-bottom: 1px solid var(--line); } .watchlist-row a:hover { color: var(--accent); border-color: var(--accent-soft); }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <div class="eyebrow">Daily Security Brief · Vol. 0</div>
+    <h1 class="wordmark">The Morning Threat Ledger</h1>
+    <div class="masthead-row">
+      <div class="masthead-meta"><span><b>Not yet published</b></span><span>Seed page — no edition has run</span></div>
+      <div class="masthead-meta"><span>General infosec + financial-sector watch</span></div>
+    </div>
+  </header>
+
+  <nav class="tab-nav" role="tablist">
+    <button class="tab-btn" id="tab-brief" role="tab" aria-selected="true" aria-controls="panel-brief">Daily Brief</button>
+    <button class="tab-btn" id="tab-hunt" role="tab" aria-selected="false" aria-controls="panel-hunt">Hunt &amp; Detect</button>
+  </nav>
+
+  <div id="panel-brief" class="tab-panel" role="tabpanel" aria-labelledby="tab-brief">
+
+  <section class="exec"><h2>Welcome</h2><ul>
+    <li><strong>This is the seed state of a ThreatLedger instance.</strong> It hasn't run yet — once you point a scheduled routine at this artifact's URL (see the repo's <code>README.md</code>), the next run will overwrite this page with a real Vol. 1 edition and keep updating it daily from here.</li>
+    <li>This page's URL is what you paste into <code>routine/routine-prompt.md</code> in place of <code>[YOUR_ARTIFACT_URL]</code> before creating the schedule.</li>
+    <li>Everything below — the IOC block, sections, and the Hunt &amp; Detect tab — is placeholder structure showing what a real edition looks like once it's running.</li>
+  </ul></section>
+
+  <section class="ioc-block">
+    <div class="ioc-block-head"><h2>Block list — act on these now</h2></div>
+    <p class="ioc-block-sub">Structured indicators released in the last 24–48h, ready to drop into a firewall or proxy blocklist. Defanged for safe handling.</p>
+    <div class="pulse-note"><b>No edition has run yet.</b> Once your scheduled routine fires for the first time, this block fills with real indicators pulled straight from Talos, Unit 42, and abuse.ch — or an honest "nothing new" note on a quiet day.</div>
+  </section>
+
+  <section class="brief-section"><div class="section-head"><h2>Critical vulnerabilities &amp; active exploitation</h2><span class="section-count">0 items</span></div>
+    <div class="pulse-note">Populated by the routine on its first real run.</div>
+  </section>
+
+  <div class="watchlist">
+    <h2>Accounts worth following</h2>
+    <p class="watchlist-sub">The X handles the routine checks for commentary each morning — worth following directly if you want the unfiltered feed. Edit this list in <code>routine/routine-prompt.md</code> to match who you actually want tracked.</p>
+    <div class="watchlist-grid">
+      <div class="watchlist-row"><span class="wl-cat">Vendor threat intel</span> <a href="https://x.com/Unit42_Intel">@Unit42_Intel</a> · <a href="https://x.com/HuntressLabs">@HuntressLabs</a> · <a href="https://x.com/Mandiant">@Mandiant</a> · <a href="https://x.com/RecordedFuture">@RecordedFuture</a> · <a href="https://x.com/TalosSecurity">@TalosSecurity</a> · <a href="https://x.com/CrowdStrike">@CrowdStrike</a></div>
+      <div class="watchlist-row"><span class="wl-cat">Independent researchers</span> <a href="https://x.com/GossiTheDog">@GossiTheDog</a> (Kevin Beaumont) · <a href="https://x.com/craiu">@craiu</a> (Costin Raiu) · <a href="https://x.com/troyhunt">@troyhunt</a> · <a href="https://x.com/briankrebs">@briankrebs</a> · <a href="https://x.com/cyb3rops">@cyb3rops</a> (Florian Roth) · <a href="https://x.com/malwaretechblog">@malwaretechblog</a> (Marcus Hutchins) · <a href="https://x.com/BushidoToken">@BushidoToken</a> (Will Thomas) · <a href="https://x.com/likethecoins">@likethecoins</a> (Katie Nickels) · <a href="https://x.com/vxunderground">@vxunderground</a></div>
+      <div class="watchlist-row"><span class="wl-cat">Ransomware &amp; dark web tracking</span> <a href="https://x.com/ransomnews">@ransomnews</a> · <a href="https://x.com/DarkWebInformer">@DarkWebInformer</a> · <a href="https://x.com/uuallan">@uuallan</a> (Allan Liska) · <a href="https://x.com/malwrhunterteam">@malwrhunterteam</a></div>
+      <div class="watchlist-row"><span class="wl-cat">Official / government</span> <a href="https://x.com/CISAgov">@CISAgov</a> · <a href="https://x.com/FSISAC">@FSISAC</a></div>
+    </div>
+  </div>
+
+  <div class="colophon">Compiled from public reporting, vendor advisories, and government catalogs. Claims attributed to threat actors are unverified unless a source confirms independently. IOCs are reproduced verbatim from their cited source — verify against the source before enforcing in production. This is ThreatLedger's seed page — see https://github.com/Noemad33/ThreatLedger.</div>
+
+  </div>
+
+  <div id="panel-hunt" class="tab-panel" role="tabpanel" aria-labelledby="tab-hunt" hidden>
+
+  <section class="brief-section">
+    <div class="section-head"><h2>Hunt &amp; Detect</h2><span class="section-count">0 findings</span></div>
+    <p class="section-sub">CrowdStrike Falcon Advanced Event Search (LogScale/CQL) queries and Elastic Security detection-rule definitions, built fresh each edition from that day's IOCs and documented attack chains.</p>
+    <div class="pulse-note">Populated by the routine on its first real run — only findings with concrete technical indicators get a card here.</div>
+  </section>
+
+  <div class="colophon">Queries and rules here are starting points, not drop-in-and-forget detections — validate field mappings against your own environment before enabling any of them to fire alerts.</div>
+
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var briefBtn = document.getElementById('tab-brief');
+  var huntBtn = document.getElementById('tab-hunt');
+  var briefPanel = document.getElementById('panel-brief');
+  var huntPanel = document.getElementById('panel-hunt');
+
+  function activate(which) {
+    var toBrief = which === 'brief';
+    briefBtn.setAttribute('aria-selected', toBrief ? 'true' : 'false');
+    huntBtn.setAttribute('aria-selected', toBrief ? 'false' : 'true');
+    briefPanel.hidden = !toBrief;
+    huntPanel.hidden = toBrief;
+    try { localStorage.setItem('mtl-active-tab', which); } catch (e) {}
+  }
+
+  briefBtn.addEventListener('click', function () { activate('brief'); });
+  huntBtn.addEventListener('click', function () { activate('hunt'); });
+
+  var stored = null;
+  try { stored = localStorage.getItem('mtl-active-tab'); } catch (e) {}
+  if (stored === 'hunt') activate('hunt');
+})();
+</script>
