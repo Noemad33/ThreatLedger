@@ -46,22 +46,50 @@ else is happening that day.
 You can add more than one — just repeat the pattern for each entity. Each one costs a single extra
 API call per run, so there's no real limit worth worrying about.
 
+## Matching the prompt to your own stack
+
+The shipped prompt is a fully worked example tuned to one specific stack: Azure + AWS for cloud,
+Elastic for SIEM, CrowdStrike across EDR/NGSIEM/Cloud Security, and Microsoft Entra/Defender for
+identity and endpoint. It's deliberately left concrete rather than abstracted into placeholders,
+so you have a complete working example to edit from rather than a fill-in-the-blanks template with
+nothing to copy. Three places carry stack-specific detail — change all three together, or the page
+will describe a stack it isn't actually covering:
+
+1. **The "Reader's stack" line** near the top of the prompt (`## The deliverable` section) — one
+   sentence that tells the routine which vendors deserve a slight inclusion-priority bump. Swap in
+   your own cloud/SIEM/EDR/identity vendors.
+2. **The "Cloud provider security feeds" and "Identity & Cloud Access discovery" source blocks** —
+   built around Azure/AWS and Entra specifically. If your org runs GCP instead of (or alongside)
+   Azure/AWS, add a GCP Security Bulletins / Google Cloud blog entry following the same pattern;
+   if your identity provider is Okta or Ping instead of Entra, swap the Entra-specific search
+   queries for your provider's equivalent terminology (Okta calls the same AiTM/token-theft
+   category differently in places).
+3. **The Hunt & Detect platform list** (below).
+
 ## Swapping the Hunt & Detect platforms
 
-The tab is built around CrowdStrike Falcon (Advanced Event Search / LogScale query language) and
-Elastic Security (KQL detection rules) because that's what the original deployment runs. If you use
-different tooling — Microsoft Defender for Endpoint (KQL over Advanced Hunting tables like
-`DeviceProcessEvents`), Splunk (SPL), Sentinel (KQL over different table names), Chronicle/Google
-SecOps (YARA-L) — edit the `## Hunt & Detect tab — building it correctly` section:
+The tab is built around three platforms — CrowdStrike Falcon (Advanced Event Search / LogScale
+query language), Elastic Security (KQL detection rules), and Microsoft Defender/Sentinel (KQL over
+Advanced Hunting tables) — because that's what the original deployment runs. If you use different
+tooling — Splunk (SPL), Google SecOps/Chronicle (YARA-L), Sentinel-only without Defender (plain Log
+Analytics KQL, a different table/column set than Advanced Hunting) — edit the `## Hunt & Detect tab
+— building it correctly` section:
 
-- Replace the CrowdStrike field-name list with your platform's real field/table names.
-- Replace `query-label` text in the template ("CrowdStrike Falcon · Advanced Event Search") with
-  your platform's name.
+- Replace the platform field/table-name list(s) with your platform's real field/table names — one
+  bullet per platform, matching the pattern already there for CrowdStrike/Elastic/Defender.
+- Replace `query-label` text in the template (e.g. "CrowdStrike Falcon · Advanced Event Search")
+  with your platform's name, and update the hunt-card template comment block to show your platform
+  count (two, three, four — however many you actually run).
 - Keep the core rule intact: **only build a card when there's a concrete indicator to hunt on**,
-  and **never fabricate a field or table name** — if you're not sure a field exists, say so or use
-  a more generic one you're confident about, the same discipline that's already in the prompt for
-  CrowdStrike/Elastic. A wrong field name in a query someone might actually deploy is a worse
-  failure than an honest gap.
+  **never fabricate a field or table name** — if you're not sure a field exists, say so or use a
+  more generic one you're confident about — and **match the query to what the platform can
+  actually see** (an EDR sensor has no visibility into a router; a posture/CSPM tool doesn't speak
+  in LogScale/KQL event queries, it speaks in policy names — see the cloud-misconfiguration
+  guidance already in that section for the pattern). A wrong field name in a query someone might
+  actually deploy is a worse failure than an honest gap.
+- Only running one or two platforms? Delete the others' bullets and panel examples rather than
+  leaving unused platforms in the prompt — an unused platform in the instructions is just noise
+  the model has to read past every single day.
 
 ## Adjusting the design
 

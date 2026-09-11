@@ -9,14 +9,21 @@ and more), writes a fresh edition, and republishes the same page in place.
 It ships with two tabs:
 
 - **Daily Brief** — an actionable IOC block up top (defanged indicators ready for a blocklist),
-  an executive summary, critical vulnerabilities, active campaigns, a financial-sector watch
-  section, social-media pulse, a persistent researcher/threat-actor continuity tracker (so it can
-  say "this is the third vendor this identity has hit in three weeks" instead of treating every
-  morning as history-free), and full source citations.
-- **Hunt & Detect** — for findings with concrete technical indicators, a CrowdStrike Falcon
-  Advanced Event Search (LogScale/CQL) query and/or an Elastic Security detection rule (query +
-  severity/risk-score/MITRE ATT&CK/index metadata), built from that day's actual IOCs and attack
-  chains — not generic examples.
+  an executive summary, critical vulnerabilities, active campaigns, a dedicated Identity & Cloud
+  Access section (AiTM phishing, token theft, conditional-access bypass, cloud IAM/storage
+  misconfiguration), a financial-sector watch section, social-media pulse, a persistent
+  researcher/threat-actor continuity tracker (so it can say "this is the third vendor this
+  identity has hit in three weeks" instead of treating every morning as history-free), and full
+  source citations.
+- **Hunt & Detect** — for findings with concrete technical indicators, whichever of a CrowdStrike
+  Falcon Advanced Event Search (LogScale/CQL) query, an Elastic Security detection rule (query +
+  severity/risk-score/MITRE ATT&CK/index metadata), and a Microsoft Defender/Sentinel Advanced
+  Hunting KQL query genuinely apply — built from that day's actual IOCs and attack chains, not
+  generic examples, and covering only the platforms a given finding is actually visible to.
+
+The shipped configuration is tuned to one example stack — Azure + AWS, Elastic, CrowdStrike
+(EDR/NGSIEM/Cloud Security), and Microsoft Entra/Defender — as a complete, working reference to
+edit from. See [Customizing](#customizing) for swapping in your own.
 
 This repo is a **template**, not a running service. You provide your own Claude Artifact and your
 own scheduled routine (both free with a Claude account); this repo gives you the prompt and the
