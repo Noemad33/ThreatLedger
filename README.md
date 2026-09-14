@@ -19,7 +19,11 @@ It ships with two tabs:
   Falcon Advanced Event Search (LogScale/CQL) query, an Elastic Security detection rule (query +
   severity/risk-score/MITRE ATT&CK/index metadata), and a Microsoft Defender/Sentinel Advanced
   Hunting KQL query genuinely apply — built from that day's actual IOCs and attack chains, not
-  generic examples, and covering only the platforms a given finding is actually visible to.
+  generic examples, and covering only the platforms a given finding is actually visible to. For
+  AWS/Azure/cloud-identity findings, it checks published rules from Elastic's own
+  [`detection-rules`](https://github.com/elastic/detection-rules) repo, [SigmaHQ](https://github.com/SigmaHQ/sigma),
+  and Microsoft's [Azure-Sentinel](https://github.com/Azure/Azure-Sentinel) repo first, and cites
+  the real rule when one exists instead of hand-authoring from scratch.
 
 The shipped configuration is tuned to one example stack — Azure + AWS, Elastic, CrowdStrike
 (EDR/NGSIEM/Cloud Security), and Microsoft Entra/Defender — as a complete, working reference to

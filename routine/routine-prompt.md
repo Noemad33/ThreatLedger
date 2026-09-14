@@ -76,6 +76,18 @@ Steps 1–3 (the reads) happen before finalizing the HTML, so the callback sente
 - GreyNoise blog — https://www.greynoise.io/blog
 - Shadowserver news & insights — https://www.shadowserver.org/news-insights/
 
+**Cloud-native threat research (added 2026-09-15)**: dedicated cloud-identity and cloud-runtime research, filling the gap a dedicated cloud detection-engineering team would otherwise cover.
+- Permiso p0 Labs blog (cloud-identity-specific: CloudTrail logging evasion, Azure privilege-escalation paths, AWS Managed AD abuse) — https://permiso.io/blog
+- Datadog Security Labs (cloud campaign research, e.g. large-scale AWS root-account password-spraying) — https://securitylabs.datadoghq.com/
+- Wiz Research (cloud breach/attack-campaign research) — https://www.wiz.io/blog
+- Sysdig Threat Research Team (cloud-native/container runtime threat research) — https://sysdig.com/blog/
+- Invictus-IR (incident-response case studies for AWS/Azure/M365/Kubernetes with real forensic IOCs) — https://www.invictus-ir.com/news
+
+**Published detection-rule repositories (added 2026-09-15) — reference material for the Hunt & Detect tab, not a daily-news source.** These are real, maintained rule sets from actual detection-engineering teams. Before hand-authoring a Hunt & Detect query for an AWS/Azure/cloud-identity finding, check whether one of these repos already has a published rule for the same technique — see the dedicated instructions in the Hunt & Detect section below for how to search them and how to cite what you find.
+- Elastic detection-rules — https://github.com/elastic/detection-rules — AWS rules under `rules/integrations/aws`, Azure/Entra rules under `rules/integrations/azure`.
+- SigmaHQ/sigma — https://github.com/SigmaHQ/sigma — AWS rules under `rules/cloud/aws/cloudtrail`, Azure rules under `rules/cloud/azure/{activity_logs,audit_logs,identity_protection,privileged_identity_management,signin_logs}`.
+- Azure/Azure-Sentinel (Microsoft's own) — https://github.com/Azure/Azure-Sentinel — KQL analytics-rule templates under `Detections/`, organized by data source (`AWSCloudTrail`, `AWSGuardDuty`, `AzureActivity`, `SigninLogs`, `AuditLogs`, and more).
+
 **Independent research discovery (mandatory every run — not a fixed list, the point is to catch what's NOT on one)**:
 - WebSearch: '"zero-day" OR "0-day" OR "privilege escalation" PoC researcher [today's date]'
 - WebSearch: 'site:linkedin.com/pulse zero-day OR exploit OR vulnerability OR "privilege escalation" [today's date]' — LinkedIn Pulse articles are directly WebFetch-able (unlike X), so follow any promising hit straight through.
@@ -275,7 +287,7 @@ If nothing verifiable turns up, say so honestly in the 'Where the conversation i
 
   <section class="brief-section">
     <div class="section-head"><h2>Hunt &amp; Detect</h2><span class="section-count">N findings</span></div>
-    <p class="section-sub">CrowdStrike Falcon Advanced Event Search (LogScale/CQL) queries and Elastic Security detection-rule definitions, built directly from today's IOCs and documented attack chains. Only findings with concrete technical indicators get a card here — vague or unconfirmed items are skipped rather than forcing a query from nothing. Field names are grounded in Falcon's real event schema and Elastic Common Schema (ECS); adapt index patterns and log-source field mappings to your own environment before deploying anything live.</p>
+    <p class="section-sub">CrowdStrike Falcon Advanced Event Search (LogScale/CQL), Elastic Security detection rules, and Microsoft Defender/Sentinel Advanced Hunting (KQL) — whichever platforms a given finding is actually visible to, built from today's IOCs and documented attack chains, and adapted from a real published rule (Elastic's own detection-rules repo, SigmaHQ, or Microsoft's Azure-Sentinel repo) where one exists rather than hand-authored from scratch. Only findings with concrete technical indicators get a card here — vague or unconfirmed items are skipped rather than forcing a query from nothing. Field names are grounded in each platform's real schema; adapt index patterns and log-source field mappings to your own environment before deploying anything live.</p>
 
     [one .hunt-card per qualifying finding — see structure below — OR, if literally nothing this cycle has concrete enough indicators, a single .pulse-note saying so honestly]
     <!-- .hunt-card structure (repeat per finding): -->
@@ -290,7 +302,7 @@ If nothing verifiable turns up, say so honestly in the 'Where the conversation i
 
       <div class="query-panel">
         <div class="query-panel-head"><span class="query-label">Elastic Security · Detection Rule</span></div>
-        <pre class="query-pre">[real KQL query using actual ECS field names and actual IOCs from today's findings]</pre>
+        <pre class="query-pre">[real KQL query using actual ECS field names and actual IOCs from today's findings — either hand-authored, or adapted from a real rule found in elastic/detection-rules, SigmaHQ/sigma, or Azure/Azure-Sentinel per the published-rule-lookup process above]</pre>
         <div class="query-meta">
           <span class="query-chip">Query language: KQL</span>
           <span class="query-chip">Severity: [level] · Risk score [0-100]</span>
@@ -298,6 +310,8 @@ If nothing verifiable turns up, say so honestly in the 'Where the conversation i
           <span class="query-chip">MITRE: [Txxxx or Txxxx.xxx] [technique name, verified against attack.mitre.org]</span>
           ... one MITRE query-chip per relevant technique, usually 1-3 ...
         </div>
+        <!-- If this query was adapted from a real published rule (AWS/Azure/cloud-identity findings only — see the lookup process above), add this line; omit it entirely for a hand-authored query: -->
+        <!-- <p style="font-size:0.82rem; color:var(--ink-faint); margin:0.4rem 0 0;">Adapted from a published rule — <a href="[real github.com URL of the actual file you fetched and read]" target="_blank" rel="noopener">org/repo — filename</a>.</p> -->
       </div>
 
       <div class="query-panel">
@@ -345,6 +359,13 @@ If nothing verifiable turns up, say so honestly in the 'Where the conversation i
 This is a second tab on the same page (client-side JS toggle, both tab panels ship in the one HTML file — see the template markup and script above). It exists so the user can go from "here's a threat" to "here's a query I can run in Falcon, Defender, or implement as an Elastic rule" without leaving the page. **The reader's stack is CrowdStrike (EDR/NGSIEM/Falcon Cloud Security), Elastic, and Microsoft Entra/Defender/Sentinel across Azure and AWS** — build for all three platforms, not just the first two, whenever a finding applies.
 
 - **Only build a card for a finding with concrete technical indicators** — a real IOC (domain/IP/hash), a documented request pattern (a specific URI/header/parameter), a documented process-behavior pattern (a specific masquerade technique, a specific persistence mechanism), or similar. An unconfirmed researcher PoC with no CVE and no published technical mechanism (e.g. "claims SYSTEM access" with no detail on how) does NOT get a card — note in its Daily Brief item instead that it was skipped from Hunt & Detect for lacking a concrete indicator, same as you'd note any other gap honestly.
+- **For any AWS/Azure/cloud-identity finding, check for a published rule before hand-authoring one — this is what makes the tab better than a guess.** The 'Published detection-rule repositories' in Sources to check above (Elastic detection-rules, SigmaHQ, Azure-Sentinel) are maintained by real detection-engineering teams. Process:
+  1. Pick 1-2 keywords from the finding's technique (e.g. 'guardduty', 's3', 'iam', 'entra', 'signin', 'storage_account', 'cloudtrail', 'bedrock').
+  2. WebFetch the relevant subfolder's file listing via the GitHub contents API — e.g. `https://api.github.com/repos/elastic/detection-rules/contents/rules/integrations/aws` (swap `aws` for `azure`), `https://api.github.com/repos/SigmaHQ/sigma/contents/rules/cloud/aws/cloudtrail`, or `https://api.github.com/repos/Azure/Azure-Sentinel/contents/Detections/<subfolder>` — and scan filenames for a match.
+  3. If a filename looks like a match, WebFetch its raw content (`https://raw.githubusercontent.com/<org>/<repo>/<branch>/<path>` — `main` for elastic/detection-rules and Azure-Sentinel, `master` for SigmaHQ) and actually read the rule logic. Never cite a rule based on its filename alone — you have to have actually read what it does.
+  4. If it's a genuine match: use its real query/logic in the query-pre block (translating into the target platform's syntax if the source format differs — e.g. a Sigma YAML condition adapted into Elastic KQL), and add a line underneath crediting it: `<p style="font-size:0.82rem; color:var(--ink-faint); margin:0.4rem 0 0;">Adapted from a published rule — <a href="[the real file's github.com URL, not the raw URL]" target="_blank" rel="noopener">org/repo — filename</a>.</p>`
+  5. If nothing matches after checking, hand-author the query as the rest of this section describes, same as before — don't claim a published source when there isn't one.
+  This only applies to AWS/Azure/cloud-identity findings; don't spend the lookup on something like a router-firmware bug that these repos won't cover. If the repos are unreachable this cycle (egress-blocked, rate-limited), fall back to hand-authoring and don't treat it as a failure — same resilience posture as every other source in this prompt.
 - **Never fabricate a field name.** Use real field/table names for whichever platform(s) apply to the finding:
   - **CrowdStrike Falcon Advanced Event Search** — LogScale/CQL syntax: `event_simpleName=<EventName>` as the base filter (common ones: `ProcessRollup2` for process execution, `DnsRequest` for DNS, `NetworkConnectIP4` for outbound connections), piped `|` filters, and real field names like `ComputerName`, `UserName`, `FileName`, `CommandLine`, `ParentBaseFileName`, `DomainName`, `RemoteAddressIP4`, `TargetFileName`.
   - **Elastic Security** — real Elastic Common Schema (ECS) field names (`process.name`, `process.command_line`, `process.parent.name`, `destination.ip`, `dns.question.name`, `url.path`, `http.request.method`, `file.path`, `user.name`, `event.dataset`, `event.action`) — KQL is the default query language unless a genuine multi-step event sequence specifically needs EQL.
@@ -368,12 +389,12 @@ This is a second tab on the same page (client-side JS toggle, both tab panels sh
 1. Call Artifact action 'read' on the URL above to check the current volume number.
 2. Check the structured IOC feeds (Unit 42 and Talos GitHub repos) FIRST for anything dated in the last 24–48h.
 3. Check the abuse.ch feeds (URLhaus/ThreatFox/MalwareBazaar) and ransomware.live (including your standing named-entity watch, if you've configured one) — see Sources to check above.
-4. Check the cloud provider feeds (AWS Security Bulletins/Blog, Azure security blog/updates, MSRC), CrowdStrike Falcon Cloud Security posts, Elastic Security Labs, and GreyNoise/Shadowserver — see Sources to check above.
+4. Check the cloud provider feeds (AWS Security Bulletins/Blog, Azure security blog/updates, MSRC), CrowdStrike Falcon Cloud Security posts, Elastic Security Labs, GreyNoise/Shadowserver, and the cloud-native threat research blogs (Permiso, Datadog Security Labs, Wiz, Sysdig, Invictus-IR) — see Sources to check above.
 5. Run the 'Independent research discovery' AND 'Identity & Cloud Access discovery' searches — neither is optional, they're what catches what the fixed list can't.
 6. Work through the remaining fixed sources list via WebFetch/WebSearch, gathering only genuine, linkable, recent items.
 7. Run the continuity READ check (see dedicated section above) for every named researcher/actor identity in what you've gathered, and weave in callback sentences. Do NOT call write_db in this step.
 8. Before writing any href, verify it per the URL-construction rule above — don't let a plausible-looking guessed URL slip through.
-9. Decide which of today's findings qualify for a Hunt & Detect card (concrete indicators only, per the dedicated section above) and draft their CrowdStrike/Elastic/Defender query panels (only the platforms that genuinely apply to each finding), verifying any MITRE technique ID against attack.mitre.org before using it.
+9. Decide which of today's findings qualify for a Hunt & Detect card (concrete indicators only, per the dedicated section above). For each AWS/Azure/cloud-identity one, check the published detection-rule repositories first (see the lookup process in the Hunt & Detect section) before hand-authoring; draft the CrowdStrike/Elastic/Defender query panels for only the platforms that genuinely apply, verifying any MITRE technique ID against attack.mitre.org before using it.
 10. Write the completed HTML (following the template exactly, both tab panels, including the Identity & Cloud Access section) to a local file, e.g. ./security-brief.html.
 11. Call Artifact with action 'publish', file_path pointing at that file, url set to the artifact URL above, title 'Morning Threat Ledger', favicon '🛡️'. Do not pass a `capabilities` argument — omitting it keeps the database capability already declared on this artifact. **This publish call is the deliverable — it must happen before any write_db call, no exceptions.**
 12. Only after the publish above has succeeded: for each named identity gathered in step 7, call Artifact action 'write_db' (db_op 'set' or 'update', collection 'tracking/identities/entries', doc_id <slug>, data as described in the Continuity tracking section) to record today's appearance. Make each call independently and don't let one block the others. If a write_db call triggers a permission prompt or otherwise doesn't return, that's expected in this unattended context — today's page is already published regardless, so there is nothing left to protect. Do not retry a stalled write.

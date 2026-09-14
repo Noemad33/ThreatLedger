@@ -91,6 +91,32 @@ Analytics KQL, a different table/column set than Advanced Hunting) — edit the 
   leaving unused platforms in the prompt — an unused platform in the instructions is just noise
   the model has to read past every single day.
 
+## Citing real published detection rules instead of hand-authored ones
+
+For AWS/Azure/cloud-identity findings, the prompt doesn't just invent a query from scratch — it
+first checks whether a real detection-engineering team has already published a matching rule, in:
+
+- [`elastic/detection-rules`](https://github.com/elastic/detection-rules) — Elastic's own rules
+  (`rules/integrations/aws`, `rules/integrations/azure`)
+- [`SigmaHQ/sigma`](https://github.com/SigmaHQ/sigma) — vendor-neutral community rules
+  (`rules/cloud/aws/cloudtrail`, `rules/cloud/azure/*`)
+- [`Azure/Azure-Sentinel`](https://github.com/Azure/Azure-Sentinel) — Microsoft's own KQL analytics
+  rules (`Detections/AWSCloudTrail`, `Detections/AzureActivity`, `Detections/SigninLogs`, etc.)
+
+The lookup process (fetch a subfolder's file listing via the GitHub contents API, scan filenames
+for a match, fetch and actually read the raw file before citing it, credit it with a link if it's
+a genuine match) is fully spelled out in the `## Hunt & Detect tab — building it correctly`
+section of the prompt — search for "check for a published rule before hand-authoring one." If you
+add your own platform (see above), consider whether an equivalent rule repo exists for it (Splunk's
+[`splunk/security_content`](https://github.com/splunk/security_content) is the closest analogue)
+and wire it into this same lookup pattern rather than leaving your new platform hand-authored-only.
+
+Two other source blocks feed this same goal from the news side rather than the reference side —
+**Cloud provider security feeds** (AWS/Azure vendor advisories) and **Cloud-native threat research**
+(Permiso, Datadog Security Labs, Wiz, Sysdig, Invictus-IR) — both already in the prompt's Sources
+list. Swap these for your own cloud provider(s) and preferred research blogs the same way you'd
+edit any other source entry.
+
 ## Adjusting the design
 
 The full token set is the first rule block inside the `<style>` tag, both in `template/seed.html`
