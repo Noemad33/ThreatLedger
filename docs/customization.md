@@ -87,6 +87,7 @@ Analytics KQL, a different table/column set than Advanced Hunting) — edit the 
   in LogScale/KQL event queries, it speaks in policy names — see the cloud-misconfiguration
   guidance already in that section for the pattern). A wrong field name in a query someone might
   actually deploy is a worse failure than an honest gap.
+- **CrowdStrike syntax is the one most likely to go wrong.** CrowdStrike Query Language (CQL/LogScale) looks like SQL or Splunk SPL but isn't: SQL-style `IN (...)` and Splunk-style `append [search ...]` are rejected by the Falcon console. The prompt carries an explicit CQL rules block (use `in(field=..., values=[...])` or `or`, write separate queries instead of `append`, only real `event_simpleName` values) added after a real "Expected an expression" failure. If you add another query language, add an equivalent "what this dialect is NOT" block for it.
 - Only running one or two platforms? Delete the others' bullets and panel examples rather than
   leaving unused platforms in the prompt — an unused platform in the instructions is just noise
   the model has to read past every single day.
