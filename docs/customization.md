@@ -118,6 +118,10 @@ Two other source blocks feed this same goal from the news side rather than the r
 list. Swap these for your own cloud provider(s) and preferred research blogs the same way you'd
 edit any other source entry.
 
+## Sources line on Hunt & Detect cards
+
+Every hunt card ends with a `.hunt-sources` line linking the primary report or IOC file it was built from, any published rule it adapted, and the MITRE ATT&CK technique pages for its chips. The routine is told to include only links it actually saw work that run, and to leave one out rather than guess. To change the format, edit the `.hunt-sources` CSS and the card template in `routine/routine-prompt.md` (and the CSS in `template/seed.html`).
+
 ## Adjusting the design
 
 The full token set is the first rule block inside the `<style>` tag, both in `template/seed.html`
